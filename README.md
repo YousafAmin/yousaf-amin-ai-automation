@@ -41,3 +41,5 @@ Nearly all copy lives in `src/lib/data/*.ts` as typed data — update those file
 `src/lib/data/contact.ts` contains placeholder contact links (email, WhatsApp, LinkedIn, Fiverr, Upwork) clearly marked with `isPlaceholder: true`. Replace these with real profile links before launch. The contact form in `src/components/sections/Contact.tsx` opens a pre-filled `mailto:` link — swap in a real backend/email service when ready.
 
 Portfolio items in `src/lib/data/projects.ts` are labeled Demo/Portfolio/Automation/Web Development projects — replace with real case studies as they become available.
+
+`src/lib/site.ts` holds the site's production domain as `SITE_URL`. It currently falls back to the placeholder `https://YOUR-DOMAIN.com` — set the real domain there (or via the `NEXT_PUBLIC_SITE_URL` environment variable) before launch. Every consumer of the domain (page metadata, Open Graph/Twitter tags, `sitemap.ts`, `robots.ts`) reads from this one constant.

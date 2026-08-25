@@ -8,10 +8,10 @@ const CENTER = { x: 250, y: 250 };
 
 const nodes = [
   { icon: Sparkles, label: "AI Layer", x: 250, y: 60, delay: 0 },
-  { icon: PhoneCall, label: "Voice Agent", x: 430.7, y: 191.3, delay: 0.35 },
-  { icon: Workflow, label: "Automation", x: 361.7, y: 403.7, delay: 0.7 },
-  { icon: BarChart3, label: "Dashboard", x: 138.3, y: 403.7, delay: 1.05 },
-  { icon: LayoutTemplate, label: "Website / Form", x: 69.3, y: 191.3, delay: 1.4 },
+  { icon: PhoneCall, label: "Voice Agent", x: 430.7, y: 191.3, delay: 0.2 },
+  { icon: Workflow, label: "Automation", x: 361.7, y: 403.7, delay: 0.4 },
+  { icon: BarChart3, label: "Dashboard", x: 138.3, y: 403.7, delay: 0.6 },
+  { icon: LayoutTemplate, label: "Website / Form", x: 69.3, y: 191.3, delay: 0.8 },
 ];
 
 function pct(value: number) {
@@ -72,7 +72,7 @@ export function HeroVisual() {
       </svg>
 
       <motion.div
-        className="absolute flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl border border-white/20 bg-gradient-to-br from-accent/90 to-accent-3/90 shadow-[0_0_50px_-8px_rgba(109,92,246,0.9)]"
+        className="absolute flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl border border-white/20 bg-gradient-to-br from-accent/90 to-accent-3-deep/90 shadow-[0_0_50px_-8px_rgba(109,92,246,0.9)]"
         style={{ left: pct(CENTER.x), top: pct(CENTER.y) }}
         animate={{ scale: [1, 1.05, 1] }}
         transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
@@ -106,7 +106,7 @@ export function HeroVisual() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.8, duration: 0.6 }}
+        transition={{ delay: 1, duration: 0.4 }}
         className="card-glass absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full px-4 py-2 text-xs font-medium text-foreground/90 shadow-xl"
       >
         <span className="h-2 w-2 animate-pulse-soft rounded-full bg-success" />

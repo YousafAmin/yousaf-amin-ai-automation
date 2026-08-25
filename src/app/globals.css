@@ -6,12 +6,19 @@
   --surface-2: #10131d;
   --foreground: #f4f5f7;
   --muted: #9aa1b2;
-  --muted-2: #6b7385;
+  --muted-2: #838ba0;
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.14);
   --accent: #6d5cf6;
   --accent-2: #22d3ee;
   --accent-3: #a855f7;
+  /* Deeper violet used only where white text/icons sit directly on a gradient
+     (buttons, logo mark) — #a855f7 alone gives white text just 3.96:1, below
+     WCAG AA. This stop keeps the gradient premium while every point along it
+     stays at 4.65:1 or higher. Kept separate from --accent-3 (used as
+     foreground text elsewhere) because that value needs to stay light to
+     read against dark backgrounds. */
+  --accent-3-deep: #9333ea;
   --success: #34d399;
   --danger: #f87171;
 }
@@ -28,6 +35,7 @@
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
   --color-accent-3: var(--accent-3);
+  --color-accent-3-deep: var(--accent-3-deep);
   --color-success: var(--success);
   --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,16 +15,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = "https://yousafamin.example.com";
-const title = "Yousaf Amin | AI Automation & Business Systems Specialist";
-const description =
-  "I help small businesses, service businesses, and startups automate workflows, deploy AI voice receptionists, build high-converting websites, and turn raw data into business analytics dashboards.";
+const siteUrl = SITE_URL;
+const title = SITE_TITLE;
+const description = SITE_DESCRIPTION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: title,
-    template: "%s | Yousaf Amin",
+    template: `%s | ${SITE_NAME}`,
   },
   description,
   keywords: [
@@ -42,14 +42,14 @@ export const metadata: Metadata = {
     "lead automation",
     "business automation systems",
   ],
-  authors: [{ name: "Yousaf Amin" }],
-  creator: "Yousaf Amin",
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
   openGraph: {
     type: "website",
     url: siteUrl,
     title,
     description,
-    siteName: "Yousaf Amin",
+    siteName: SITE_NAME,
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: title }],
   },
   twitter: {
