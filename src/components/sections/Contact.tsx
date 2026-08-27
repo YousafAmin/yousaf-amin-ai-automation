@@ -1,49 +1,65 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { CheckCircle2, Send } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2, Send } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { Button } from "@/components/ui/Button";
 import { budgetRanges, contactChannels, contactMethods, serviceOptions } from "@/lib/data/contact";
 import { getIcon } from "@/lib/icons";
 
+type Status = "idle" | "submitting" | "success" | "error";
+
+// Encodes a FormData-like record as an application/x-www-form-urlencoded body,
+// the format Netlify's form-processing endpoint expects.
+function encodeFormBody(data: Record<string, string>) {
+  return Object.keys(data)
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
+    .join("&");
+}
+
 export function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const business = formData.get("business") as string;
-    const service = formData.get("service") as string;
-    const description = formData.get("description") as string;
-    const budget = formData.get("budget") as string;
-    const preferred = formData.get("preferred") as string;
+    if (status === "submitting") return;
 
-    const body = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      `Business: ${business}`,
-      `Service Needed: ${service}`,
-      `Budget Range: ${budget}`,
-      `Preferred Contact Method: ${preferred}`,
-      "",
-      "Project Description:",
-      description,
-    ].join("\n");
+    const form = e.currentTarget;
+    const formData = new FormData(form);
 
-    const mailto = `mailto:your-email@example.com?subject=${encodeURIComponent(
-      `New Project Inquiry from ${name}`,
-    )}&body=${encodeURIComponent(body)}`;
+    // Honeypot: bots tend to fill every field, humans never see this one.
+    if ((formData.get("bot-field") as string)?.length) {
+      setStatus("success");
+      return;
+    }
 
-    window.location.href = mailto;
-    setSubmitted(true);
+    setStatus("submitting");
+
+    const payload: Record<string, string> = {};
+    formData.forEach((value, key) => {
+      payload[key] = String(value);
+    });
+
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encodeFormBody(payload),
+      });
+
+      if (!response.ok) throw new Error(`Submission failed with status ${response.status}`);
+
+      setStatus("success");
+      form.reset();
+    } catch (error) {
+      console.error("Contact form submission failed:", error);
+      setStatus("error");
+    }
   }
 
   return (
-    <section id="contact" className="relative py-24 sm:py-32">
+    <section id="contact" className="relative overflow-hidden py-24 sm:py-32">
       <div className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-[800px] -translate-x-1/2 rounded-full bg-accent/15 blur-[140px]" />
       <Container className="relative grid gap-14 lg:grid-cols-[1fr_1.2fr]">
         <RevealOnScroll>
@@ -78,32 +94,49 @@ export function Contact() {
               );
             })}
           </div>
-          <p className="mt-4 text-xs text-muted-2">
-            Contact links above are placeholders — replace them with your real profiles before launch.
-          </p>
         </RevealOnScroll>
 
         <RevealOnScroll delay={0.1} className="card-glass rounded-2xl p-6 sm:p-8">
-          {submitted ? (
+          {status === "success" ? (
             <div className="flex h-full flex-col items-center justify-center py-16 text-center">
               <CheckCircle2 className="h-12 w-12 text-success" strokeWidth={1.5} />
-              <h3 className="mt-4 text-lg font-semibold text-foreground">Your email client should now be open</h3>
+              <h3 className="mt-4 text-lg font-semibold text-foreground">Request Received</h3>
               <p className="mt-2 max-w-sm text-sm text-muted">
-                Send the pre-filled message to complete your inquiry. I&apos;ll follow up as soon as possible.
+                Thank you! Your project request has been received. I&apos;ll review your details and get
+                back to you as soon as possible.
               </p>
-              <Button variant="secondary" size="sm" className="mt-6" onClick={() => setSubmitted(false)}>
+              <Button variant="secondary" size="sm" className="mt-6" onClick={() => setStatus("idle")}>
                 Send Another Message
               </Button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="grid gap-5">
+            <form
+              name="contact"
+              method="POST"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+              onSubmit={handleSubmit}
+              className="grid gap-5"
+            >
+              {/* Required for Netlify's static form detection and submission routing. */}
+              <input type="hidden" name="form-name" value="contact" />
+              <p className="hidden">
+                <label>
+                  Don&apos;t fill this out if you&apos;re human: <input name="bot-field" tabIndex={-1} autoComplete="off" />
+                </label>
+              </p>
+
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Name" name="name" required placeholder="Jane Doe" />
-                <Field label="Email" name="email" type="email" required placeholder="jane@company.com" />
+                <Field label="Full Name" name="name" required placeholder="Jane Doe" />
+                <Field label="Email Address" name="email" type="email" required placeholder="jane@company.com" />
               </div>
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="Business" name="business" placeholder="Company / brand name" />
-                <SelectField label="Service Needed" name="service" options={serviceOptions} />
+                <Field label="WhatsApp / Phone Number" name="phone" type="tel" placeholder="+1 555 123 4567" />
+                <Field label="Company / Brand Name" name="business" placeholder="Company / brand name" />
+              </div>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <SelectField label="Service Needed" name="service" options={serviceOptions} required />
+                <SelectField label="Budget Range" name="budget" options={budgetRanges} />
               </div>
               <TextAreaField
                 label="Project Description"
@@ -111,14 +144,35 @@ export function Contact() {
                 required
                 placeholder="What are you trying to automate, build, or improve?"
               />
-              <div className="grid gap-5 sm:grid-cols-2">
-                <SelectField label="Budget Range" name="budget" options={budgetRanges} />
-                <SelectField label="Preferred Contact Method" name="preferred" options={contactMethods} />
-              </div>
+              <SelectField label="Preferred Contact Method" name="preferred" options={contactMethods} />
 
-              <Button type="submit" size="lg" className="mt-2 w-full sm:w-fit">
-                Start a Project
-                <Send size={16} />
+              {status === "error" ? (
+                <div className="flex items-start gap-2.5 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>
+                    Something went wrong sending your message. Please try again, or reach out directly using
+                    the contact options above.
+                  </span>
+                </div>
+              ) : null}
+
+              <Button
+                type="submit"
+                size="lg"
+                disabled={status === "submitting"}
+                className="mt-2 w-full sm:w-fit"
+              >
+                {status === "submitting" ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    Start a Project
+                    <Send size={16} />
+                  </>
+                )}
               </Button>
             </form>
           )}
@@ -186,12 +240,26 @@ function TextAreaField({
   );
 }
 
-function SelectField({ label, name, options }: { label: string; name: string; options: string[] }) {
+function SelectField({
+  label,
+  name,
+  options,
+  required,
+}: {
+  label: string;
+  name: string;
+  options: string[];
+  required?: boolean;
+}) {
   return (
     <label className="flex flex-col gap-2 text-sm">
-      <span className="font-medium text-foreground/90">{label}</span>
+      <span className="font-medium text-foreground/90">
+        {label}
+        {required ? <span className="text-accent-2"> *</span> : null}
+      </span>
       <select
         name={name}
+        required={required}
         defaultValue=""
         className="rounded-xl border border-border-strong bg-white/[0.03] px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent-2/60"
       >

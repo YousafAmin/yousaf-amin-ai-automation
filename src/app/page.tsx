@@ -8,6 +8,7 @@ import { Process } from "@/components/sections/Process";
 import { About } from "@/components/sections/About";
 import { TechStack } from "@/components/sections/TechStack";
 import { WhyWorkWithMe } from "@/components/sections/WhyWorkWithMe";
+import { DigitalProducts } from "@/components/sections/DigitalProducts";
 import { FAQ } from "@/components/sections/FAQ";
 import { Contact } from "@/components/sections/Contact";
 
@@ -24,6 +25,7 @@ export default function Home() {
       <About />
       <TechStack />
       <WhyWorkWithMe />
+      <DigitalProducts />
       <FAQ />
       <Contact />
     </>

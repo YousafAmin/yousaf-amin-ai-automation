@@ -9,6 +9,6 @@
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://YOUR-DOMAIN.com").replace(/\/$/, "");
 
 export const SITE_NAME = "Yousaf Amin";
-export const SITE_TITLE = "Yousaf Amin | AI Automation & Business Systems Specialist";
+export const SITE_TITLE = "Yousaf Amin | AI Automation, Voice Agents, Websites & Data Analytics";
 export const SITE_DESCRIPTION =
-  "I help small businesses, service businesses, and startups automate workflows, deploy AI voice receptionists, build high-converting websites, and turn raw data into business analytics dashboards.";
+  "Yousaf Amin helps businesses automate workflows, deploy AI voice agents, build high-converting websites, and turn data into actionable business insights.";

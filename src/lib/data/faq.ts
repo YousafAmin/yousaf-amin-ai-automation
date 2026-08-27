@@ -49,6 +49,11 @@ export const faqs: FaqItem[] = [
     answer: "Yes, all work is done remotely and communication happens through email, WhatsApp, or your preferred channel.",
   },
   {
+    question: "Do you sell digital products or templates?",
+    answer:
+      "I'm building out a small collection of practical templates, dashboards, and automation systems as digital products. This is a secondary offering alongside my main client work — check the Digital Products & Tools section for what's currently available.",
+  },
+  {
     question: "How do we get started?",
     answer:
       "Fill out the project form below or reach out directly. I'll review the details and follow up to discuss the right approach for your business.",
